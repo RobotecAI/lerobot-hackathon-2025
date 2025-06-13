@@ -1,0 +1,35 @@
+[project]
+name = "lerobot-2025-hackaton"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "gym-aloha",
+    "gym-hil",
+    "gym-pusht",
+    "gym-xarm",
+    "lerobot[smolvla,feetech,aloha,pusht,umi,xarm,video_benchmark]",
+    "pre-commit>=3.8.0",
+    "rai-bench",
+    "rai-core",
+    "rai-framework[openset,simbench]",
+    "rai-open-set-vision",
+    "rai-s2s[elevenlabs]",
+    "rai-sim",
+    "transformers",
+]
+
+[tool.uv.sources]
+lerobot = { path = "modules/lerobot", editable = true}
+rai-core = { path = "modules/rai/src/rai_core", editable = true }
+rai-open-set-vision = { path = "modules/rai/src/rai_extensions/rai_open_set_vision", editable = true }
+rai-framework = { path = "modules/rai", editable = true }
+rai-sim = { path = "modules/rai/src/rai_sim", editable = true }
+rai-bench = { path = "modules/rai/src/rai_bench", editable = true }
+rai-s2s = { path = "modules/rai/src/rai_s2s", editable = true }
+gym-hil = { path = "modules/gym-hil", editable = true }
+gym-aloha = { path = "modules/gym-aloha", editable = true }
+gym-pusht = { path = "modules/gym-pusht", editable = true }
+transformers = { path = "modules/transformers", editable = true }
+gym-xarm = { path = "modules/gym-xarm", editable = true }

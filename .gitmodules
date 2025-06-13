@@ -1,0 +1,21 @@
+[submodule "modules/rai"]
+	path = modules/rai
+	url = git@github.com:RobotecAI/rai.git
+[submodule "modules/lerobot"]
+	path = modules/lerobot
+	url = git@github.com:RobotecAI/lerobot.git
+[submodule "modules/gym-hil"]
+	path = modules/gym-hil
+	url = https://github.com/HuggingFace/gym-hil.git
+[submodule "modules/gym-aloha"]
+	path = modules/gym-aloha
+	url = https://github.com/huggingface/gym-aloha
+[submodule "modules/gym-pusht"]
+	path = modules/gym-pusht
+	url = https://github.com/huggingface/gym-pusht
+[submodule "modules/transformers"]
+	path = modules/transformers
+	url = git@github.com:RobotecAI/transformers.git
+[submodule "modules/gym-xarm"]
+	path = modules/gym-xarm
+	url = https://github.com/huggingface/gym-xarm.git
