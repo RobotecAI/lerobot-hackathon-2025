@@ -45,7 +45,7 @@ source install/setup.sh
 
 4. Open the O3DE editor:
 ```
-./sim/build/linux/bin/profile/Editor
+../sim/build/linux/bin/profile/Editor
 ```
 
 Load the only level and press play.
