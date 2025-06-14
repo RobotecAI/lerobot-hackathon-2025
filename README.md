@@ -50,6 +50,12 @@ source install/setup.sh
 
 Load the only level and press play.
 
+The test package makes use of another ROS package, make sure it is installed for your distro, e.g.:
+
+```bash
+sudo apt install ros-jazzy-joint-state-publisher-gui
+```
+
 5. Run the joint state publisher package to manually set the arm's joints' values.
 ```bash
 ros2 launch lerobot_o3de joint_state_publisher.launch.py
