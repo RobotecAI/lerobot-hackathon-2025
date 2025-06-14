@@ -9,4 +9,4 @@ uv run python modules/lerobot/lerobot/scripts/train.py \
   --output_dir=outputs/train/act_so101_test \
   --job_name=act_so101_test \
   --policy.device=cuda \
-  --wandb.enable=false
+  --wandb.enable=true 
