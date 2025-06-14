@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 PORT=/dev/ttyACM0 
+HF_USER=$(huggingface-cli whoami | head -n 1)
 
 uv run python -m lerobot.record \
     --robot.type=so101_follower \
@@ -11,5 +12,7 @@ uv run python -m lerobot.record \
     --dataset.repo_id=lerobotec/so101_test \
     --teleop.port=/dev/ttyACM1 \
     --teleop.id=leader \
-    --display_data=true \
+    --dataset.repo_id=${HF_USER}/record-test \
+    --dataset.num_episodes=2 \
+    --dataset.single_task="Grab the red ball"
 
