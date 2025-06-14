@@ -3,7 +3,7 @@ import time
 
 def main():
     # Initialize the camera
-    camera = cv2.VideoCapture('/dev/video4')
+    camera = cv2.VideoCapture('/dev/video0')
     
     # Set camera properties
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)

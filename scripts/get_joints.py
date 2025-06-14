@@ -16,12 +16,12 @@ class Joints(BaseModel):
 
 
 robot_config = SO101FollowerConfig(
-    port="/dev/ttyACM0",
+    port="/dev/ttyACM1",
     id="follower",
 )
 
 teleop_config = SO101LeaderConfig(
-    port="/dev/ttyACM1",
+    port="/dev/ttyACM0",
     id="leader",
 )
 
@@ -45,3 +45,6 @@ while True:
 
 # uv run python -m lerobot.teleoperate --robot.type=so101_follower --robot.port=/dev/ttyACM0 --robot.id=follower --teleop.type=so101_leader --teleop.port=/dev/ttyACM1 --teleop.id=leader
 # uv run python -m lerobot.calibrate --teleop.type=so101_leader --teleop.port=/dev/ttyACM1 --teleop.id=leader
+
+
+# {"shoulder_pan":-0.7844602166604489,"shoulder_lift":-24.416135881104026,"elbow_flex":-33.33333333333334,"wrist_flex":99.2156862745098,"wrist_roll":-54.450806871421136,"gripper":55.301794453507334}
