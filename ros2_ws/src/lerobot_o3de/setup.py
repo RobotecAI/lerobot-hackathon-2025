@@ -24,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'joint_states = lerobot_o3de.joint_states:main'
+            'joint_states = lerobot_o3de.joint_states:main',
+            'put_ball_in_basket_service = lerobot_o3de.put_ball_in_basket_service:main'
         ],
     },
 )
