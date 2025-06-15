@@ -9,7 +9,7 @@ uv run python -m lerobot.record \
     --robot.type=so101_follower \
     --robot.port=$FOLLOWER_PORT \
     --robot.id=follower \
-    --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video0, width: 640, height: 480, fps: 15}, side: {type: opencv, index_or_path: /dev/video10, width: 640, height: 480, fps: 15}}" \
+    --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video4, width: 640, height: 480, fps: 15} }" \
     --teleop.type=so101_leader \
     --teleop.port=$LEADER_PORT \
     --teleop.id=leader \
@@ -18,6 +18,6 @@ uv run python -m lerobot.record \
     --dataset.num_episodes=50 \
     --dataset.single_task="Pick up the red ball" \
     --dataset.push_to_hub=false \
-    --dataset.episode_time_s=20 \
+    --dataset.episode_time_s=1000 \
     --dataset.reset_time_s=10 \
 
