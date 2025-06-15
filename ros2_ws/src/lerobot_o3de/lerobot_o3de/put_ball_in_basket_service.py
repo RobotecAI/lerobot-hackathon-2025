@@ -8,6 +8,16 @@ from std_srvs.srv import Trigger
 import time
 
 
+BASKET_POSITION = [
+    1.75,
+    0.5,
+    0.76,
+    1.57,
+    -1.5,
+    0.0,
+]  # to be calibrated
+
+
 class PutBallInBasketService(Node):
     def __init__(self):
         super().__init__("put_ball_in_basket_service")
@@ -32,22 +42,10 @@ class PutBallInBasketService(Node):
             0.0,
             0.0,
         ]  # Center/home position
-        self.basket_position = [
-            0.0,
-            -0.5,
-            1.4,
-            0.84,
-            -1.75,
-            0.0,
-        ]  # Basket position (to be calibrated)
-        self.gripper_open_position = [
-            0.0,
-            -0.5,
-            1.4,
-            0.84,
-            -1.75,
-            1.5,
-        ]  # Open gripper
+        self.basket_position = BASKET_POSITION
+
+        self.gripper_open_position = self.basket_position.copy()
+        self.gripper_open_position[-1] = 1.5
 
         # Movement parameters
         self.movement_duration = 2.0  # seconds to complete each movement
@@ -80,7 +78,9 @@ class PutBallInBasketService(Node):
 
             response.success = True
             response.message = "Ball put in basket successfully"
-            self.get_logger().info("Put ball in basket operation completed successfully")
+            self.get_logger().info(
+                "Put ball in basket operation completed successfully"
+            )
 
         except Exception as e:
             response.success = False
