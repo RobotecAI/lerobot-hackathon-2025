@@ -14,10 +14,11 @@ uv run python -m lerobot.record \
     --teleop.port=$LEADER_PORT \
     --teleop.id=leader \
     --display_data=true \
-    --dataset.repo_id=${HF_USER}/record-test-sim-${TIME} \
-    --dataset.num_episodes=50 \
+    --dataset.repo_id=${HF_USER}/record-test-sim-v1.1 \
+    --dataset.num_episodes=0 \
     --dataset.single_task="Pick up the red ball" \
-    --dataset.push_to_hub=false \
-    --dataset.episode_time_s=1000 \
+    --dataset.push_to_hub=true \
+    --dataset.episode_time_s=15 \
     --dataset.reset_time_s=10 \
+    --resume=true
 

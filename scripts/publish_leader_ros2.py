@@ -38,20 +38,21 @@ class MyNode(rclpy.node.Node):
 
     def timer_callback(self):
         action = teleop_device.get_action()
-        joints = Joints(
-            shoulder_pan=action['shoulder_pan.pos'] * 0.009599315,
-            shoulder_lift=action['shoulder_lift.pos'] * 0.0279253,
-            elbow_flex=action['elbow_flex.pos'] * 0.0165806,
-            wrist_flex=action['wrist_flex.pos'] * 0.01658065,
-            wrist_roll=action['wrist_roll.pos'] * 0.0174533,
-            gripper=action['gripper.pos'] * 0.01919863,
-        )
-        print(joints.model_dump_json())
+        print(action)
+        # joints = Joints(
+        #     shoulder_pan=map_value(action['shoulder_pan.pos'], 0.9290807966625466 ,
+        #     shoulder_lift=action['shoulder_lift.pos'] * 0.0279253,
+        #     elbow_flex=action['elbow_flex.pos'] * 0.0165806,
+        #     wrist_flex=action['wrist_flex.pos'] * 0.01658065,
+        #     wrist_roll=action['wrist_roll.pos'] * 0.0174533,
+        #     gripper=action['gripper.pos'] * 0.01919863,
+        # )
+        # #print(joints.model_dump_json())
         
 
-        position_command = Float64MultiArray()
-        position_command.data = [joints.shoulder_pan, joints.shoulder_lift, joints.elbow_flex, joints.wrist_flex, joints.wrist_roll, joints.gripper]
-        self.publisher.publish(position_command)
+        # position_command = Float64MultiArray()
+        # position_command.data = [joints.shoulder_pan, joints.shoulder_lift, joints.elbow_flex, joints.wrist_flex, joints.wrist_roll, joints.gripper]
+        # self.publisher.publish(position_command)
 
 
 node = MyNode()
