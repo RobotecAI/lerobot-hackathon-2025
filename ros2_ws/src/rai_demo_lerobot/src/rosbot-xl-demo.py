@@ -127,7 +127,7 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
             topic="/camera/camera/color/image_raw",
         ),
         PickBallTool(connector=connector),
-        PutInBasketTool(connector=connector),
+        # PutInBasketTool(connector=connector),
         WaitForSecondsTool(),
         GetObjectPositionsTool(
             connector=connector,
