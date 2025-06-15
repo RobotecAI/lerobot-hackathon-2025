@@ -9,16 +9,15 @@ uv run python -m lerobot.record \
     --robot.type=so101_follower \
     --robot.port=$FOLLOWER_PORT \
     --robot.id=follower \
-    --robot.cameras="{ front: {type: opencv, index_or_path: 0, width: 720, height: 544, fps: 30}}" \
+    --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video0, width: 640, height: 480, fps: 15}, side: {type: opencv, index_or_path: /dev/video10, width: 640, height: 480, fps: 15}}" \
     --teleop.type=so101_leader \
-    --dataset.repo_id=lerobotec/so101_test \
     --teleop.port=$LEADER_PORT \
     --teleop.id=leader \
     --display_data=true \
-    --dataset.repo_id=${HF_USER}/record-test-20250614_141155 \
-    --dataset.num_episodes=20 \
-    --dataset.single_task="Grab the red ball" \
-    --dataset.push_to_hub=False \
+    --dataset.repo_id=${HF_USER}/record-test-sim-${TIME} \
+    --dataset.num_episodes=50 \
+    --dataset.single_task="Pick up the red ball" \
+    --dataset.push_to_hub=false \
     --dataset.episode_time_s=20 \
-    --dataset.reset_time_s=10
+    --dataset.reset_time_s=10 \
 
