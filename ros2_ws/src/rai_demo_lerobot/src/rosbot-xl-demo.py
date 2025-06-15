@@ -15,6 +15,7 @@
 from typing import List, cast
 
 import rclpy
+import time
 import streamlit as st
 from langchain_core.runnables import Runnable
 from langchain_core.tools import BaseTool
@@ -39,12 +40,48 @@ from rai_open_set_vision.tools import GetGrabbingPointTool
 from rai_whoami import EmbodimentInfo
 from rai.tools.ros2.base import BaseROS2Tool
 from rai.communication.ros2 import ROS2Message
+from nav2_simple_commander.robot_navigator import BasicNavigator
+from geometry_msgs.msg import PoseStamped
 
 # Set page configuration first
 st.set_page_config(
     page_title="RAI ROSBotXL Demo",
     page_icon=":robot:",
 )
+
+# Define the input schema for the tool
+class GetToBallToolInput(BaseModel):
+    pass
+
+# Define the tool
+class GetToBallTool(BaseROS2Tool):
+    """Tool for navigating to the ball with nav2"""
+    name: str = "get_to_ball"
+    description: str = "Gets to the ball pickup pose (next to it)"
+    args_schema: Type[GetToBallToolInput] = GetToBallToolInput
+
+    def _run(self) -> str:
+        """Execute the ball pickup"""
+        #response.payload.success = True
+        response = self.connector.service_call(
+            ROS2Message(
+                payload={}
+            ),
+            target="/next_pickup_pose",
+            msg_type="demo_interfaces/srv/GetPose",
+        )
+        print(response)
+        if response.payload.success:
+            navigator = BasicNavigator()
+            poseWithTimestamp = PoseStamped()
+            poseWithTimestamp.pose = response.payload.pose
+            poseWithTimestamp.header.frame_id = "map"
+            navigator.goToPose(poseWithTimestamp)
+            while not navigator.isTaskComplete():
+                time.sleep(0.1)
+            return "Going to pose successful"
+        else:
+            return "Going to pose failed"
 
 # Define the input schema for the tool
 class PickBallToolInput(BaseModel):
@@ -66,12 +103,12 @@ class PickBallTool(BaseROS2Tool):
                 payload={}
             ),
             target="/pick_ball",
-            msg_type="srd_srv/Trigger",
+            msg_type="std_srvs/srv/Trigger",
         )
         if response.payload.success:
             return "Picking ball successful"
         else:
-            return "Picking ball failed"
+            return "Picking ball failed " + response.payload.message
 
 @st.cache_resource
 def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
@@ -88,26 +125,13 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
             target_frame="base_link",
             timeout_sec=5.0,
         ),
-        GetROS2ImageConfiguredTool(
-            connector=connector,
-            topic="/camera/camera/color/image_raw",
-        ),
         PickBallTool(
             connector=connector
         ),
-        WaitForSecondsTool(),
-        GetObjectPositionsTool(
-            connector=connector,
-            target_frame="map",
-            source_frame="sensor_frame",
-            camera_topic="/camera/camera/color/image_raw",
-            depth_topic="/camera/camera/depth/image_rect_raw",
-            camera_info_topic="/camera/camera/color/camera_info",
-            get_grabbing_point_tool=GetGrabbingPointTool(
-                connector=connector,
-            ),
+        GetToBallTool(
+            connector=connector
         ),
-        *Nav2Toolkit(connector=connector).get_tools(),
+        WaitForSecondsTool()
     ]
 
     agent = ReActAgent(
