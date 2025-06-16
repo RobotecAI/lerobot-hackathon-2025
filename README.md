@@ -80,3 +80,20 @@ pre-commit install
 source setup_shell.sh
 python scripts/test_setup.py
 ```
+
+
+8. Call put ball in basket service
+
+```bash
+ros2 run lerobot_o3de put_ball_in_basket_service
+```
+
+```bash
+ros2 service call /put_ball_in_basket srd_srv/Trigger
+```
+
+To adjust basket position, edit [`ros2_ws/src/lerobot_o3de/lerobot_o3de/put_ball_in_basket_service.py`](ros2_ws/src/lerobot_o3de/lerobot_o3de/put_ball_in_basket_service.py) and change `BASKET_POSITION` variable.
+
+The service can be called with a `PutInBasketTool` tool defined in the `ros2_ws/src/rai_demo_lerobot/src/rosbot-xl-demo.py` file. To enable it uncomment the line [here](ros2_ws/src/rai_demo_lerobot/src/rosbot-xl-demo.py#L130).
+
+> **WARNING**: RAI integration has not been tested yet.

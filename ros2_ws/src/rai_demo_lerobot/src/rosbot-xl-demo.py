@@ -32,7 +32,7 @@ from rai.tools.ros2 import (
     GetObjectPositionsTool,
     GetROS2ImageConfiguredTool,
     GetROS2TransformConfiguredTool,
-    Nav2Toolkit
+    Nav2Toolkit,
 )
 from rai.tools.time import WaitForSecondsTool
 from rai_open_set_vision.tools import GetGrabbingPointTool
@@ -48,6 +48,7 @@ st.set_page_config(
     page_title="RAI ROSBotXL Demo",
     page_icon=":robot:",
 )
+
 
 # Define the input schema for the tool
 class GetToBallToolInput(BaseModel):
@@ -91,17 +92,16 @@ class PickBallToolInput(BaseModel):
 # Define the tool
 class PickBallTool(BaseROS2Tool):
     """Tool for picking the ball using a learned policy"""
+
     name: str = "pick_ball"
     description: str = "Picks the ball and returns to default pose with ball in gripper"
     args_schema: Type[PickBallToolInput] = PickBallToolInput
 
     def _run(self) -> str:
         """Execute the ball pickup"""
-        #response.payload.success = True
+        # response.payload.success = True
         response = self.connector.service_call(
-            ROS2Message(
-                payload={}
-            ),
+            ROS2Message(payload={}),
             target="/pick_ball",
             msg_type="std_srvs/srv/Trigger",
         )
@@ -109,6 +109,40 @@ class PickBallTool(BaseROS2Tool):
             return "Picking ball successful"
         else:
             return "Picking ball failed " + response.payload.message
+
+
+# Define the input schema for the put in basket tool
+class PutInBasketToolInput(BaseModel):
+    pass
+
+
+# Define the put in basket tool
+class PutInBasketTool(BaseROS2Tool):
+    """Tool for putting the ball in the basket by moving arm to fixed position, opening gripper, and returning to center"""
+
+    name: str = "put_in_basket"
+    description: str = (
+        "Moves the arm to the basket position, opens the gripper to release the ball, and returns to center position"
+    )
+    args_schema: Type[PutInBasketToolInput] = PutInBasketToolInput
+
+    def _run(self) -> str:
+        """Execute the ball placement sequence at the fixed basket position"""
+        try:
+            # Call the putballinbasket service for the fixed basket position
+            response = self.connector.service_call(
+                ROS2Message(payload={}),
+                target="/put_ball_in_basket",
+                msg_type="srd_srv/Trigger",
+            )
+
+            if response.payload.success:
+                return "Ball put in basket successfully and arm returned to center"
+            else:
+                return f"Putting ball in basket failed: {response.payload.message if hasattr(response.payload, 'message') else 'Unknown error'}"
+        except Exception as e:
+            return f"Error while putting ball in basket: {str(e)}"
+
 
 @st.cache_resource
 def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
@@ -131,6 +165,9 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
         GetToBallTool(
             connector=connector
         ),
+        PutInBasketTool(
+            connector=connector
+        )
         WaitForSecondsTool()
     ]
 
