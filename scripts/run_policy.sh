@@ -1,3 +1,5 @@
+rm -rf /home/kdabrowski/.cache/huggingface/lerobot/bboczek-rai/eval_super_policy
+source setup_shell.sh
 HF_USER=$(huggingface-cli whoami | head -n 1)
 
 python -m lerobot.record  \
