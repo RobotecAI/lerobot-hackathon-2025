@@ -7,15 +7,24 @@ from std_msgs.msg import Float64MultiArray
 from std_srvs.srv import Trigger
 import time
 
-
 BASKET_POSITION = [
-    1.75,
-    0.5,
-    0.76,
-    1.57,
-    -1.5,
-    0.0,
-]  # to be calibrated
+  -0.0603011515,
+  -0.558506,
+  -1.65806,
+  -1.74533,
+  -0.009424781999999965,
+  0.01036724400000022,
+]  # 
+
+
+# BASKET_POSITION = [
+#     1.75,
+#     0.5,
+#     0.76,
+#     1.57,
+#     -1.5,
+#     0.0,
+# ]  # to be calibrated
 
 
 class PutBallInBasketService(Node):
