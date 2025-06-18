@@ -167,7 +167,7 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
         ),
         PutInBasketTool(
             connector=connector
-        )
+        ),
         WaitForSecondsTool()
     ]
 
