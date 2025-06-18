@@ -97,8 +97,7 @@ class PickBallTool(BaseROS2Tool):
     description: str = "Picks the ball and returns to default pose with ball in gripper"
     args_schema: Type[PickBallToolInput] = PickBallToolInput
 
-    def _run(self) -> str:
-        """Execute the ball pickup"""
+    def call_service(self) -> str:
         # response.payload.success = True
         response = self.connector.service_call(
             ROS2Message(payload={}),
@@ -109,6 +108,26 @@ class PickBallTool(BaseROS2Tool):
             return "Picking ball successful"
         else:
             return "Picking ball failed " + response.payload.message
+        
+    def _run(self) -> str:
+        """Execute the ball pickup by running the run_policy.sh script with a 60-second timeout"""
+        self.connector.node.get_logger().info("Running policy script to pick the ball...")
+        import subprocess
+        try:
+            result = subprocess.run(
+                ["/bin/bash", "/home/kdabrowski/hackathon/repo/scripts/run_policy.sh"],
+                capture_output=True, text=True, check=True,
+                cwd="/home/kdabrowski/hackathon/repo",
+                timeout=60
+            )
+            return f"Policy script executed successfully: {result.stdout.strip()}"
+        except subprocess.TimeoutExpired:
+            return "Policy script timed out after 60 seconds."
+        except subprocess.CalledProcessError as e:
+            return f"Policy script failed: {e.stderr.strip()}"
+        except Exception as e:
+            return f"Error running policy script: {str(e)}"
+
 
 
 # Define the input schema for the put in basket tool
