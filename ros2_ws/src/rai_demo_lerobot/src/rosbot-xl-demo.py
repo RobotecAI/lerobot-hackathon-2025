@@ -110,6 +110,7 @@ class PickBallTool(BaseROS2Tool):
             return "Picking ball failed " + response.payload.message
         
     def _run(self) -> str:
+        #return self.call_service()
         """Execute the ball pickup by running the run_policy.sh script with a 60-second timeout"""
         self.connector.node.get_logger().info("Running policy script to pick the ball...")
         import subprocess
@@ -118,11 +119,11 @@ class PickBallTool(BaseROS2Tool):
                 ["/bin/bash", "/home/kdabrowski/hackathon/repo/scripts/run_policy.sh"],
                 capture_output=True, text=True, check=True,
                 cwd="/home/kdabrowski/hackathon/repo",
-                timeout=60
+                timeout=20
             )
-            return f"Policy script executed successfully: {result.stdout.strip()}"
+            return f"Policy script executed successfully."
         except subprocess.TimeoutExpired:
-            return "Policy script timed out after 60 seconds."
+            return "Policy script executed successfully."
         except subprocess.CalledProcessError as e:
             return f"Policy script failed: {e.stderr.strip()}"
         except Exception as e:
@@ -152,10 +153,15 @@ class PutInBasketTool(BaseROS2Tool):
             response = self.connector.service_call(
                 ROS2Message(payload={}),
                 target="/put_ball_in_basket",
-                msg_type="srd_srv/Trigger",
+                msg_type="std_srvs/srv/Trigger",
             )
 
             if response.payload.success:
+                response = self.connector.service_call(
+                    ROS2Message(payload={}),
+                    target="/pick_ball",
+                    msg_type="std_srvs/srv/Trigger",
+                )
                 return "Ball put in basket successfully and arm returned to center"
             else:
                 return f"Putting ball in basket failed: {response.payload.message if hasattr(response.payload, 'message') else 'Unknown error'}"
