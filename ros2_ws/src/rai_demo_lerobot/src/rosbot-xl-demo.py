@@ -36,6 +36,7 @@ from rai.tools.ros2 import (
 )
 from rai.tools.time import WaitForSecondsTool
 from rai_open_set_vision.tools import GetGrabbingPointTool
+import tf_transformations as tft
 
 from rai_whoami import EmbodimentInfo
 from rai.tools.ros2.base import BaseROS2Tool
@@ -76,7 +77,15 @@ class GetToBallTool(BaseROS2Tool):
             navigator = BasicNavigator()
             poseWithTimestamp = PoseStamped()
             poseWithTimestamp.pose = response.payload.pose
+            orientation = tft.quaternion_from_euler(90, 0, 0)
+            poseWithTimestamp.pose.orientation.x = orientation[0]
+            poseWithTimestamp.pose.orientation.y = orientation[1]
+            poseWithTimestamp.pose.orientation.z = orientation[2]
+            poseWithTimestamp.pose.orientation.w = orientation[3]
             poseWithTimestamp.header.frame_id = "map"
+            navigator.goToPose(poseWithTimestamp)
+            while not navigator.isTaskComplete():
+                time.sleep(0.1)
             navigator.goToPose(poseWithTimestamp)
             while not navigator.isTaskComplete():
                 time.sleep(0.1)
