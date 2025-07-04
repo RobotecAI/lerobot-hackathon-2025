@@ -42,6 +42,7 @@ from rai.tools.ros2.base import BaseROS2Tool
 from rai.communication.ros2 import ROS2Message
 from nav2_simple_commander.robot_navigator import BasicNavigator
 from geometry_msgs.msg import PoseStamped
+import os
 
 # Set page configuration first
 st.set_page_config(
@@ -80,6 +81,9 @@ class GetToBallTool(BaseROS2Tool):
             navigator.goToPose(poseWithTimestamp)
             while not navigator.isTaskComplete():
                 time.sleep(0.1)
+            navigator.goToPose(poseWithTimestamp)
+            while not navigator.isTaskComplete():
+                time.sleep(0.1)
             return "Going to pose successful"
         else:
             return "Going to pose failed"
@@ -97,8 +101,7 @@ class PickBallTool(BaseROS2Tool):
     description: str = "Picks the ball and returns to default pose with ball in gripper"
     args_schema: Type[PickBallToolInput] = PickBallToolInput
 
-    def _run(self) -> str:
-        """Execute the ball pickup"""
+    def call_service(self) -> str:
         # response.payload.success = True
         response = self.connector.service_call(
             ROS2Message(payload={}),
@@ -109,6 +112,27 @@ class PickBallTool(BaseROS2Tool):
             return "Picking ball successful"
         else:
             return "Picking ball failed " + response.payload.message
+        
+    def _run(self) -> str:
+        #return self.call_service()
+        """Execute the ball pickup by running the run_policy.sh script with a 60-second timeout"""
+        self.connector.node.get_logger().info("Running policy script to pick the ball...")
+        import subprocess
+        try:
+            result = subprocess.run(
+                ["/bin/bash", os.path.join(os.path.dirname(__file__), "run_policy.sh")],
+                capture_output=True, text=True, check=True,
+                cwd=os.path.join(os.path.dirname(__file__), ".."),
+                timeout=20
+            )
+            return f"Policy script executed successfully."
+        except subprocess.TimeoutExpired:
+            return "Policy script executed successfully."
+        except subprocess.CalledProcessError as e:
+            return f"Policy script failed: {e.stderr.strip()}"
+        except Exception as e:
+            return f"Error running policy script: {str(e)}"
+
 
 
 # Define the input schema for the put in basket tool
@@ -133,10 +157,15 @@ class PutInBasketTool(BaseROS2Tool):
             response = self.connector.service_call(
                 ROS2Message(payload={}),
                 target="/put_ball_in_basket",
-                msg_type="srd_srv/Trigger",
+                msg_type="std_srvs/srv/Trigger",
             )
 
             if response.payload.success:
+                response = self.connector.service_call(
+                    ROS2Message(payload={}),
+                    target="/pick_ball",
+                    msg_type="std_srvs/srv/Trigger",
+                )
                 return "Ball put in basket successfully and arm returned to center"
             else:
                 return f"Putting ball in basket failed: {response.payload.message if hasattr(response.payload, 'message') else 'Unknown error'}"
@@ -148,7 +177,7 @@ class PutInBasketTool(BaseROS2Tool):
 def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
     rclpy.init()
     embodiment_info = EmbodimentInfo.from_file(
-        "../../../../modules/rai/examples/embodiments/rosbotxl_embodiment.json"
+        os.path.join(os.path.dirname(__file__), "../modules/rai/examples/embodiments/rosbotxl_embodiment.json")
     )
 
     connector = ROS2Connector(executor_type="multi_threaded")
@@ -167,7 +196,7 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
         ),
         PutInBasketTool(
             connector=connector
-        )
+        ),
         WaitForSecondsTool()
     ]
 
@@ -182,7 +211,7 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
     return cast(Runnable[ReActAgentState, ReActAgentState], agent)
 
 
-def main():
+def main(args=None):
     run_streamlit_app(
         initialize_agent(),
         "RAI ROSBotXL Demo",
