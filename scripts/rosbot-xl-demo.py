@@ -36,13 +36,13 @@ from rai.tools.ros2 import (
 )
 from rai.tools.time import WaitForSecondsTool
 from rai_open_set_vision.tools import GetGrabbingPointTool
-import tf_transformations as tft
 
 from rai_whoami import EmbodimentInfo
 from rai.tools.ros2.base import BaseROS2Tool
 from rai.communication.ros2 import ROS2Message
 from nav2_simple_commander.robot_navigator import BasicNavigator
 from geometry_msgs.msg import PoseStamped
+import os
 
 # Set page configuration first
 st.set_page_config(
@@ -77,11 +77,6 @@ class GetToBallTool(BaseROS2Tool):
             navigator = BasicNavigator()
             poseWithTimestamp = PoseStamped()
             poseWithTimestamp.pose = response.payload.pose
-            orientation = tft.quaternion_from_euler(90, 0, 0)
-            poseWithTimestamp.pose.orientation.x = orientation[0]
-            poseWithTimestamp.pose.orientation.y = orientation[1]
-            poseWithTimestamp.pose.orientation.z = orientation[2]
-            poseWithTimestamp.pose.orientation.w = orientation[3]
             poseWithTimestamp.header.frame_id = "map"
             navigator.goToPose(poseWithTimestamp)
             while not navigator.isTaskComplete():
@@ -125,9 +120,9 @@ class PickBallTool(BaseROS2Tool):
         import subprocess
         try:
             result = subprocess.run(
-                ["/bin/bash", "/home/kdabrowski/hackathon/repo/scripts/run_policy.sh"],
+                ["/bin/bash", os.path.join(os.path.dirname(__file__), "run_policy.sh")],
                 capture_output=True, text=True, check=True,
-                cwd="/home/kdabrowski/hackathon/repo",
+                cwd=os.path.join(os.path.dirname(__file__), ".."),
                 timeout=20
             )
             return f"Policy script executed successfully."
@@ -182,7 +177,7 @@ class PutInBasketTool(BaseROS2Tool):
 def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
     rclpy.init()
     embodiment_info = EmbodimentInfo.from_file(
-        "../../../../modules/rai/examples/embodiments/rosbotxl_embodiment.json"
+        os.path.join(os.path.dirname(__file__), "../modules/rai/examples/embodiments/rosbotxl_embodiment.json")
     )
 
     connector = ROS2Connector(executor_type="multi_threaded")
@@ -216,7 +211,7 @@ def initialize_agent() -> Runnable[ReActAgentState, ReActAgentState]:
     return cast(Runnable[ReActAgentState, ReActAgentState], agent)
 
 
-def main():
+def main(args=None):
     run_streamlit_app(
         initialize_agent(),
         "RAI ROSBotXL Demo",
