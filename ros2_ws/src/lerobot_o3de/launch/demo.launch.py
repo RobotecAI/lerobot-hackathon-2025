@@ -24,6 +24,8 @@ def generate_launch_description():
         cmd=[
             LaunchConfiguration("game_launcher"),
             "+LoadLevel=RoomWithRobotAndBalls",
+            "-bg_ConnectToAssetProcessor=0",
+            "-r_displayInfo=0",
         ],
         output="screen",
     )
