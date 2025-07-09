@@ -10,6 +10,16 @@ The robot can navigate around the environment using [nav2](https://docs.nav2.org
 
 # Usage
 
+> Note: This project was only tested on Ubuntu 22.04 with ROS2 Humble. Other Ubuntu versions or ROS2 distributions may require additional adjustments.
+
+> Note: In the instructions below, we assume that you have already installed ROS2 Humble and that you have sourced the ROS2 setup script in each terminal.
+
+0. Install nav2 dependencies
+
+```bash
+sudo apt install ros-humble-nav2-bringup
+```
+
 1. Clone repository
 ```bash
 git clone --recurse-submodules git@github.com:RobotecAI/lerobot-hackathon-2025.git
@@ -29,31 +39,43 @@ source install/setup.sh
 3. Setup Python modules
 ```bash
 cd $BASE
+
 # install uv package manager
 curl -LsSf https://astral.sh/uv/install.sh | sh
-uv sync -p 3.10 # for Ubuntu 22.04
-uv sync -p 3.12 # for Ubuntu 24.04
+uv sync -p 3.10
 ```
 
 4. Test python env
 
 ```bash
+cd $BASE
 source setup_shell.sh
 python scripts/test_setup.py
 ```
 
 5. Download the finetuned policy weights and the simulation binary
 
-### TODO: Put commands with download links here
+```bash
+cd $BASE
+
+wget -q --show-progress https://robotec-ml-rai-public.s3.eu-north-1.amazonaws.com/LeRobotec2025Demo_jammyhumble.zip
+unzip LeRobotec2025Demo_jammyhumble.zip
+
+wget -q --show-progress https://robotec-ml-rai-public.s3.eu-north-1.amazonaws.com/pretrained_model.zip
+unzip pretrained_model.zip
+```
 
 6. Run the simulation package.
 
 ```bash
-ros2 launch lerobot_o3de demo.launch.py game_launcher:=path/to/sim.GameLauncher
+cd $BASE
+ros2 launch lerobot_o3de demo.launch.py game_launcher:=./LeRobotec2025Demo_jammyhumble/sim.GameLauncher
 ```
 
-7. Run RAI in streamlit
+7. In second terminal, run RAI in streamlit
 
 ```bash
+cd $BASE
+source setup_shell.sh
 streamlit run scripts/rosbot-xl-demo.py
 ```
