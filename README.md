@@ -79,3 +79,5 @@ cd $BASE
 source setup_shell.sh
 streamlit run scripts/rosbot-xl-demo.py
 ```
+
+> Note: The policy trained on our small dataset is not perfect, we observed a success rate of about 50% on the task of picking up the ball. Combined with the inaccuracies of the steering system of the robot, you might notice the policy failing to pick up the ball fairly often. We recommend giving it a few tries to succeed with the task!
