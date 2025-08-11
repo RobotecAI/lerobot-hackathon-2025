@@ -10,9 +10,13 @@ The robot can navigate around the environment using [nav2](https://docs.nav2.org
 
 # Usage
 
-> Note: This project was only tested on Ubuntu 22.04 with ROS2 Humble. Other Ubuntu versions or ROS2 distributions may require additional adjustments.
+> [!Note]
+>
+>This project was only tested on Ubuntu 22.04 with ROS2 Humble. Other Ubuntu versions or ROS2 distributions may require additional adjustments.
 
-> Note: In the instructions below, we assume that you have already installed ROS2 Humble and that you have sourced the ROS2 setup script in each terminal.
+> [!Note]
+> 
+> In the instructions below, we assume that you have already installed ROS2 Humble and that you have sourced the ROS2 setup script in each terminal.
 
 0. Install nav2 dependencies
 
@@ -80,4 +84,6 @@ source setup_shell.sh
 streamlit run scripts/rosbot-xl-demo.py
 ```
 
-> Note: The policy trained on our small dataset is not perfect, we observed a success rate of about 50% on the task of picking up the ball. Combined with the inaccuracies of the steering system of the robot, you might notice the policy failing to pick up the ball fairly often. We recommend giving it a few tries to succeed with the task!
+> [!Note]
+>
+> The policy trained on our small dataset is not perfect, we observed a success rate of about 50% on the task of picking up the ball. Combined with the inaccuracies of the steering system of the robot, you might notice the policy failing to pick up the ball fairly often. We recommend giving it a few tries to succeed with the task!
